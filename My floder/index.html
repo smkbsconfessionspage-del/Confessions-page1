@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMKBS CONFESSIONS PAGE</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+body {
+  background: #fff5f8;
+  padding: 20px;
+  color: #333;
+}
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: rgba(255,255,255,0.95);
+  padding: 25px;
+  border-radius: 16px;
+}
+.header-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.header-title h1 {
+  color: #ff4d94;
+  font-size: 24px;
+}
+.post {
+  margin-bottom: 25px;
+}
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ffcce0;
+  border-radius: 8px;
+  background: #fff;
+}
+.radio-group {
+  margin-bottom: 10px;
+  display: flex;
+  gap: 15px;
+}
+button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+  margin-right: 5px;
+}
+.btn-primary { background: #ff4d94; }
+.btn-gray { background: #777; }
+.btn-report { background: #dc3545; }
+.btn-admin { background: #28a745; }
+.btn-danger { background: #e63946; }
+.btn-safe { background: #28a745; }
+.note {
+  padding: 18px;
+  border-radius: 10px;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-bottom: 15px;
+}
+.note.yellow { background: #fff3cd; }
+.note.pink  { background: #f8d7da; }
+.note.blue  { background: #d1ecf1; }
+.note h4 {
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+.note p {
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+.note small {
+  font-size: 12px;
+  color: #888;
+}
+.post-id {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #999;
+}
+.reported-tag {
+  position: absolute;
+  top: 30px;
+  right: 12px;
+  background: #dc3545;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+}
+.vote-group {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  display: flex;
+  gap: 8px;
+  font-size: 14px;
+}
+.vote-like {
+  cursor: pointer;
+  color: #999;
+}
+.vote-like.active { color: #ff4d94; }
+.vote-dislike {
+  cursor: pointer;
+  color: #999;
+}
+.vote-dislike.active { color: #dc3545; }
+.controls {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.comment {
+  background: rgba(255,255,255,0.8);
+  padding: 8px;
+  border-radius: 6px;
+  margin-top: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.comment-content { flex: 1; }
+.comment-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.comment-vote {
+  display: flex;
+  gap: 4px;
+  font-size: 12px;
+}
+.comment-like { cursor: pointer; color: #999; }
+.comment-like.active { color: #ff4d94; }
+.comment-dislike { cursor: pointer; color: #999; }
+.comment-dislike.active { color: #dc3545; }
+.comment-del { color: #dc3545; cursor: pointer; font-size: 12px; }
+.comment-report { color: #dc3545; cursor: pointer; font-size: 12px; }
+.footer {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 14px;
+  color: #666;
+}
+.hidden { display: none; }
+#adminPanel {
+  margin: 20px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+.report-item {
+  background: white;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 6px;
+  border-left: 4px solid #dc3545;
+}
+/* 新增：删除历史记录样式 */
+.delete-history {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #ddd;
+}
+.delete-history h4 {
+  color: #555;
+  margin-bottom: 10px;
+}
+.delete-item {
+  background: #f1f1f1;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #444;
+}
+.delete-type {
+  font-weight: bold;
+  color: #d63031;
+}
+.media-preview {
+  margin: 10px 0;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.media-item {
+  width: 100px;
+  height: 100px;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+.media-item img, .media-item video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.media-remove {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(220,53,69,0.8);
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 20px;
+  cursor: pointer;
+}
+.media-content {
+  margin: 8px 0;
+}
+.report-btn-group {
+  margin-top: 8px;
+  display: flex;
+  gap: 6px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-title">
+    <h1>SMKBS CONFESSIONS PAGE</h1>
+  </div>
+
+  <div class="post">
+    <input id="nick" placeholder="昵称（选填）">
+    <div class="radio-group">
+      <label><input type="radio" name="mode" value="anon" checked> 匿名</label>
+      <label><input type="radio" name="mode" value="real"> 实名</label>
+    </div>
+    <textarea id="content" placeholder="写下你的内容..." rows="4"></textarea>
+    <input type="file" id="mediaUpload" accept="image/*,video/*" onchange="previewMedia()">
+    <div id="mediaPreview" class="media-preview"></div>
+    <button class="btn-primary" onclick="submitPost()">提交</button>
+    <button class="btn-gray" onclick="adminLogin()">管理员</button>
+  </div>
+
+  <div id="adminPanel" class="hidden">
+    <h4>📮 举报处理</h4>
+    <div id="reportList"></div>
+
+    <!-- 新增：删除历史记录区域 -->
+    <div class="delete-history">
+      <h4>🗑️ 已删除内容记录</h4>
+      <div id="deleteHistoryList"></div>
+    </div>
+  </div>
+
+  <div class="wall" id="wall"></div>
+
+  <div class="footer">
+    Instagram: smkbs_confessions_page
+  </div>
+</div>
+
+<script>
+const ADMIN_PWD = "ETHAN0608";
+let isAdmin = false;
+let adminLoggedIn = false;
+let uploadedMedia = [];
+
+// 新增：删除历史记录存储
+function getDeleteHistory() { return JSON.parse(localStorage.getItem("deleteHistory")) || []; }
+function saveDeleteHistory(arr) { localStorage.setItem("deleteHistory", JSON.stringify(arr)); }
+
+function getPosts() { return JSON.parse(localStorage.getItem("posts")) || []; }
+function savePosts(arr) { localStorage.setItem("posts", JSON.stringify(arr)); render(); }
+
+function previewMedia() {
+  const files = document.getElementById("mediaUpload").files;
+  if (!files.length) return;
+  uploadedMedia = [];
+  document.getElementById("mediaPreview").innerHTML = "";
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const mediaUrl = e.target.result;
+      uploadedMedia.push({
+        type: file.type.startsWith("image") ? "image" : "video",
+        url: mediaUrl
+      });
+      document.getElementById("mediaPreview").innerHTML += `
+        <div class="media-item">
+          ${file.type.startsWith("image") ? `<img src="${mediaUrl}">` : `<video src="${mediaUrl}" muted></video>`}
+          <span class="media-remove" onclick="removeMedia(${uploadedMedia.length-1})">×</span>
+        </div>
+      `;
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function removeMedia(index) {
+  uploadedMedia.splice(index, 1);
+  previewMedia();
+}
+
+function render() {
+  const wall = document.getElementById("wall");
+  wall.innerHTML = "";
+  let posts = getPosts();
+  const colors = ["yellow", "pink", "blue"];
+
+  posts.forEach((p, i) => {
+    p.likes = p.likes || 0;
+    p.dislikes = p.dislikes || 0;
+    p.userLiked = p.userLiked || false;
+    p.userDisliked = p.userDisliked || false;
+    p.reportCount = p.reportCount || 0;
+    p.media = p.media || [];
+
+    if (!isAdmin && !p.approved) return;
+
+    let mediaHtml = "";
+    if (p.media.length > 0) {
+      p.media.forEach(m => {
+        mediaHtml += `
+          <div class="media-content">
+            ${m.type === "image" ? `<img src="${m.url}" style="max-width:100%; border-radius:6px;">` : `<video src="${m.url}" controls style="max-width:100%; border-radius:6px;">`}
+          </div>
+        `;
+      });
+    }
+
+    let commentsHtml = "";
+    if (p.comments && p.comments.length > 0) {
+      commentsHtml = p.comments.map((cm, j) => {
+        cm.likes = cm.likes || 0;
+        cm.dislikes = cm.dislikes || 0;
+        cm.userLiked = cm.userLiked || false;
+        cm.userDisliked = cm.userDisliked || false;
+        return `
+          <div class="comment">
+            <div class="comment-content">${cm.nick}: ${cm.text}</div>
+            <div class="comment-actions">
+              <div class="comment-vote">
+                <span class="comment-like ${cm.userLiked ? 'active' : ''}" onclick="commentLike(${p.id}, ${j})">❤️ ${cm.likes}</span>
+                <span class="comment-dislike ${cm.userDisliked ? 'active' : ''}" onclick="commentDislike(${p.id}, ${j})">👎 ${cm.dislikes}</span>
+              </div>
+              <span class="comment-report" onclick="reportComment(${p.id}, ${j})">🚩举报</span>
+              ${isAdmin ? `<span class="comment-del" onclick="delComment(${p.id}, ${j})">删除</span>` : ''}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    wall.innerHTML += `
+      <div class="note ${colors[i % 3]}">
+        <div class="post-id">#${posts.length - i}</div>
+        ${p.reportCount > 0 ? `<div class="reported-tag">举报 ${p.reportCount}</div>` : ''}
+        <div class="vote-group">
+          <span class="vote-like ${p.userLiked ? 'active' : ''}" onclick="likePost(${p.id})">❤️ ${p.likes}</span>
+          <span class="vote-dislike ${p.userDisliked ? 'active' : ''}" onclick="dislikePost(${p.id})">👎 ${p.dislikes}</span>
+        </div>
+        <h4>${p.isAnon ? "匿名" : (p.nick || "匿名")}</h4>
+        <p>${p.content}</p>
+        ${mediaHtml}
+        <small>${p.time}</small>
+        <div class="controls">
+          <button class="btn-report" onclick="reportPost(${p.id})">🚩举报</button>
+          ${isAdmin ? `<button class="btn-admin" onclick="toggleApprove(${p.id})">${p.approved ? "取消通过" : "通过审核"}</button>` : ''}
+          ${isAdmin ? `<button class="btn-gray" onclick="delPost(${p.id})">删除</button>` : ''}
+        </div>
+        <div class="comment-area" style="margin-top:10px;">
+          ${commentsHtml}
+          <input placeholder="写评论..." onkeydown="if(event.key=='Enter') addComment(${p.id}, this)" style="margin-top:8px;">
+        </div>
+      </div>
+    `;
+  });
+
+  if (isAdmin) {
+    renderReports();
+    renderDeleteHistory(); // 新增：渲染删除历史
+  }
+}
+
+// 新增：渲染删除历史
+function renderDeleteHistory() {
+  const list = document.getElementById("deleteHistoryList");
+  const history = getDeleteHistory();
+  list.innerHTML = "";
+
+  if (history.length === 0) {
+    list.innerHTML = "<p>暂无删除记录</p>";
+    return;
+  }
+
+  history.forEach(item => {
+    list.innerHTML += `
+      <div class="delete-item">
+        <div><span class="delete-type">【${item.type}】</span> ${item.time}</div>
+        <div>内容：${item.content}</div>
+        ${item.media ? `<div style="font-size:12px; color:#666;">含媒体</div>` : ""}
+      </div>
+    `;
+  });
+}
+
+function submitPost() {
+  const content = document.getElementById("content").value.trim();
+  const nick = document.getElementById("nick").value.trim();
+  const isAnon = document.querySelector("input[name='mode']:checked").value === "anon";
+  if (!content) return alert("请输入内容");
+
+  const newPost = {
+    id: Date.now(),
+    nick,
+    isAnon,
+    content,
+    time: new Date().toLocaleString(),
+    approved: false,
+    likes: 0,
+    dislikes: 0,
+    userLiked: false,
+    userDisliked: false,
+    reportCount: 0,
+    reports: [],
+    comments: [],
+    media: uploadedMedia
+  };
+
+  const list = getPosts();
+  list.unshift(newPost);
+  savePosts(list);
+
+  document.getElementById("content").value = "";
+  document.getElementById("nick").value = "";
+  document.getElementById("mediaUpload").value = "";
+  document.getElementById("mediaPreview").innerHTML = "";
+  uploadedMedia = [];
+
+  alert("投稿已提交，等待管理员审核");
+}
+
+function likePost(id) {
+  const posts = getPosts();
+  const p = posts.find(x => x.id === id);
+  if (!p) return;
+  if (p.userLiked) {
+    p.likes--;
+  } else {
+    p.likes++;
+    if (p.userDisliked) {
+      p.dislikes--;
+      p.userDisliked = false;
+    }
+  }
+  p.userLiked = !p.userLiked;
+  savePosts(posts);
+}
+
+function dislikePost(id) {
+  const posts = getPosts();
+  const p = posts.find(x => x.id === id);
+  if (!p) return;
+  if (p.userDisliked) {
+    p.dislikes--;
+  } else {
+    p.dislikes++;
+    if (p.userLiked) {
+      p.likes--;
+      p.userLiked = false;
+    }
+  }
+  p.userDisliked = !p.userDisliked;
+  savePosts(posts);
+}
+
+function commentLike(pid, cid) {
+  const posts = getPosts();
+  const p = posts.find(x => x.id === pid);
+  if (!p || !p.comments[cid]) return;
+  const cm = p.comments[cid];
+  if (cm.userLiked) cm.likes--;
+  else {
+    cm.likes++;
+    if (cm.userDisliked) { cm.dislikes--; cm.userDisliked = false; }
+  }
+  cm.userLiked = !cm.userLiked;
+  savePosts(posts);
+}
+
+function commentDislike(pid, cid) {
+  const posts = getPosts();
+  const p = posts.find(x => x.id === pid);
+  if (!p || !p.comments[cid]) return;
+  const cm = p.comments[cid];
+  if (cm.userDisliked) cm.dislikes--;
+  else {
+    cm.dislikes++;
+    if (cm.userLiked) { cm.likes--; cm.userLiked = false; }
+  }
+  cm.userDisliked = !cm.userDisliked;
+  savePosts(posts);
+}
+
+function addComment(pid, input) {
+  const text = input.value.trim();
+  if (!text) return;
+  const posts = getPosts();
+  const p = posts.find(x => x.id === pid);
+  if (!p) return;
+  p.comments = p.comments || [];
+  p.comments.push({
+    nick: "游客",
+    text: text,
+    likes: 0,
+    dislikes: 0,
+    userLiked: false,
+    userDisliked: false
+  });
+  savePosts(posts);
+  input.value = "";
+}
+
+function reportPost(id) {
+  const reason = prompt("举报原因：");
+  if (!reason) return;
+  const posts = getPosts();
+  const p = posts.find(x => x.id === id);
+  if (!p) return;
+  p.reportCount = (p.reportCount || 0) + 1;
+  p.reports = p.reports || [];
+  p.reports.push({ time: new Date().toLocaleString(), reason });
+  savePosts(posts);
+  alert("已举报");
+}
+
+function reportComment(pid, cid) {
+  const reason = prompt("举报原因：");
+  if (!reason) return;
+  const posts = getPosts();
+  const p = posts.find(x => x.id === pid);
+  if (!p || !p.comments[cid]) return;
+  const cm = p.comments[cid];
+  cm.reported = true;
+  cm.reason = reason;
+  savePosts(posts);
+  alert("举报已提交");
+}
+
+function adminLogin() {
+  if (adminLoggedIn) {
+    isAdmin = true;
+    document.getElementById("adminPanel").classList.remove("hidden");
+    render();
+    return;
+  }
+  const pwd = prompt("管理员密码：");
+  if (pwd === ADMIN_PWD) {
+    adminLoggedIn = true;
+    isAdmin = true;
+    document.getElementById("adminPanel").classList.remove("hidden");
+    render();
+    alert("管理员登录成功");
+  } else if (pwd) {
+    alert("密码错误");
+  }
+}
+
+function toggleApprove(id) {
+  const posts = getPosts();
+  const p = posts.find(x => x.id === id);
+  if (!p) return;
+  p.approved = !p.approved;
+  savePosts(posts);
+  alert(p.approved ? "已通过审核" : "已取消通过");
+}
+
+// 修改：删除投稿时记录历史
+function delPost(id) {
+  const posts = getPosts();
+  const p = posts.find(x => x.id === id);
+  if (!p) return;
+
+  // 新增：记录删除历史
+  const history = getDeleteHistory();
+  history.unshift({
+    type: "投稿",
+    time: p.time,
+    content: p.content,
+    media: p.media && p.media.length > 0
+  });
+  saveDeleteHistory(history);
+
+  if (confirm("删除投稿？")) {
+    const newPosts = posts.filter(x => x.id !== id);
+    savePosts(newPosts);
+  }
+}
+
+// 修改：删除评论时记录历史
+function delComment(pid, cid) {
+  const posts = getPosts();
+  const p = posts.find(x => x.id === pid);
+  if (!p || !p.comments[cid]) return;
+
+  // 新增：记录删除历史
+  const history = getDeleteHistory();
+  history.unshift({
+    type: "评论",
+    time: new Date().toLocaleString(),
+    content: p.comments[cid].text,
+    media: false
+  });
+  saveDeleteHistory(history);
+
+  p.comments.splice(cid, 1);
+  savePosts(posts);
+}
+
+function renderReports() {
+  const list = document.getElementById("reportList");
+  list.innerHTML = "";
+  const posts = getPosts();
+  let allReports = [];
+
+  posts.forEach(p => {
+    if (p.reports && p.reports.length) {
+      p.reports.forEach((r, i) => {
+        allReports.push({
+          pid: p.id,
+          time: r.time,
+          reason: r.reason,
+          content: p.content,
+          media: p.media
+        });
+      });
+    }
+  });
+
+  if (!allReports.length) {
+    list.innerHTML = "<p>暂无举报</p>";
+    return;
+  }
+
+  allReports.forEach(r => {
+    let mediaHtml = "";
+    if (r.media && r.media.length) {
+      r.media.forEach(m => {
+        mediaHtml += `
+          <div style="margin:6px 0;">
+            ${m.type === "image" ? `<img src="${m.url}" style="max-width:100px;">` : `<video src="${m.url}" controls style="max-width:100px;">`}
+          </div>
+        `;
+      });
+    }
+
+    list.innerHTML += `
+      <div class="report-item">
+        <div>时间：${r.time}</div>
+        <div>原因：${r.reason}</div>
+        <div>内容：${r.content}</div>
+        ${mediaHtml}
+        <div class="report-btn-group">
+          <button class="btn-safe" onclick="markSafe(${r.pid})">无违规</button>
+          <button class="btn-danger" onclick="delViolation(${r.pid})">违规删除</button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function markSafe(pid) {
+  const posts = getPosts();
+  const p = posts.find(x => x.id === pid);
+  if (!p) return;
+  p.reportCount = 0;
+  p.reports = [];
+  savePosts(posts);
+  alert("已标记为无违规");
+}
+
+function delViolation(pid) {
+  if (!confirm("确定删除违规内容？")) return;
+  const posts = getPosts();
+  const p = posts.find(x => x.id === pid);
+
+  // 新增：记录删除历史
+  const history = getDeleteHistory();
+  history.unshift({
+    type: "违规投稿",
+    time: new Date().toLocaleString(),
+    content: p.content,
+    media: p.media && p.media.length > 0
+  });
+  saveDeleteHistory(history);
+
+  const newPosts = posts.filter(x => x.id !== pid);
+  localStorage.setItem("posts", JSON.stringify(newPosts));
+  render();
+  alert("已删除");
+}
+
+render();
+</script>
+</body>
+</html>
